@@ -7,11 +7,11 @@ interface TeamMemberFormProps {
 
 const TeamMemberForm: React.FC<TeamMemberFormProps> = ({ onAddMember }) => {
     const [name, setName] = useState('');
-    const [role, setRole] = useState('');
+    const [role, setRole] = useState('teamleader'); // Defaultní hodnota
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!name.trim() || !role.trim()) return;
+        if (!name.trim()) return;
 
         const newMember: Member = {
             id: Date.now(),
@@ -22,30 +22,38 @@ const TeamMemberForm: React.FC<TeamMemberFormProps> = ({ onAddMember }) => {
 
         onAddMember(newMember);
         setName('');
-        setRole('');
+        setRole('teamleader'); // Reset na výchozí hodnotu
     };
 
     return (
         <form onSubmit={handleSubmit}>
-            <input
-                type="text"
-                placeholder="Member Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="form-control"
-                required
-            />
-            <input
-                type="text"
-                placeholder="Member Role"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                className="form-control"
-                required
-            />
-            <button type="submit" className="btn">Add Member</button>
+            <div>
+                <label>
+                    Name:
+                    <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Enter name"
+                        required
+                    />
+                </label>
+            </div>
+            <div>
+                <label>
+                    Role:
+                    <select
+                        value={role}
+                        onChange={(e) => setRole(e.target.value)}
+                        required
+                    >
+                        <option value="teamleader">Team Leader</option>
+                        <option value="member">Member</option>
+                    </select>
+                </label>
+            </div>
+            <button type="submit">Add Member</button>
         </form>
     );
 };
-
 export default TeamMemberForm;
