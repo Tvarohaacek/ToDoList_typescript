@@ -1,0 +1,68 @@
+import React from 'react';
+import { Task } from './Task';
+import { Member } from './Member';
+
+interface TaskListProps {
+    tasks: Task[];
+    members: Member[];
+    currentDate: Date;
+    onTaskComplete: (taskId: number) => void;
+}
+
+const TaskList: React.FC<TaskListProps> = ({
+                                               tasks,
+                                               members,
+                                               currentDate,
+                                               onTaskComplete
+                                           }) => {
+    const isTaskOverdue = (task: Task) => {
+        return !task.isCompleted && currentDate > task.dueDate;
+    };
+
+    const getAssignedMemberNames = (assignedMemberIds: number[]) => {
+        return assignedMemberIds
+            .map(id => {
+                const member = members.find(m => m.id === id);
+                return member ? member.name : 'Unknown';
+            })
+            .join(', ');
+    };
+
+    return (
+        <ul className="task-list">
+            {tasks.map(task => (
+                <li
+                    key={task.id}
+                    className={`
+            ${task.isCompleted ? 'completed' : ''} 
+            ${isTaskOverdue(task) ? 'overdue' : ''}
+          `}
+                >
+                    <div className="task-header">
+                        <strong>{task.title}</strong>
+                        {!task.isCompleted && (
+                            <button
+                                onClick={() => onTaskComplete(task.id)}
+                                className="btn complete-btn"
+                                disabled={task.isCompleted}
+                            >
+                                {isTaskOverdue(task) ? 'Overdue' : 'Complete Task'}
+                            </button>
+                        )}
+                    </div>
+                    <p>{task.description}</p>
+                    <div className="task-meta">
+                        <p>
+                            <strong>Due:</strong> {task.dueDate.toLocaleDateString()}
+                        </p>
+                        <p>
+                            <strong>Assigned to:</strong> {getAssignedMemberNames(task.assignedMembers)}
+                        </p>
+                    </div>
+                </li>
+            ))}
+        </ul>
+    );
+};
+
+export default TaskList;
