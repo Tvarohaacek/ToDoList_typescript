@@ -6,6 +6,7 @@ import TeamMemberList from './TeamMemberList';
 import TaskList from './TaskList';
 import { Member } from './Member';
 import { Task } from './Task';
+//@ts-ignore
 import "./styles.css"
 
 const App: React.FC = () => {
