@@ -27,7 +27,10 @@ const App: React.FC = () => {
     }, []);
 
     const addMember = (member: Member) => {
-        const updatedMembers = [...teamMembers, { ...member, id: Date.now() }];
+        const updatedMembers = [
+            ...teamMembers, 
+            { ...member, id: Date.now().toString() } // Převod id na string
+        ];
         setTeamMembers(updatedMembers);
         sessionStorage.setItem('teamMembers', JSON.stringify(updatedMembers));
     };
