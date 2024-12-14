@@ -6,3 +6,5 @@ export interface Task {
     assignedMembers: string[];
     isCompleted: boolean;
 }
+
+export default Task;
