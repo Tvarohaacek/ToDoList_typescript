@@ -48,7 +48,9 @@ const App: React.FC = () => {
 
     const markTaskAsCompleted = (taskId: number) => {
         const updatedTasks = tasks.map(task =>
-            task.id === taskId ? { ...task, isCompleted: true } : task
+            task.id === taskId.toString() // Převod čísla na řetězec
+                ? { ...task, isCompleted: true }
+                : task
         );
         setTasks(updatedTasks);
         sessionStorage.setItem('tasks', JSON.stringify(updatedTasks));
