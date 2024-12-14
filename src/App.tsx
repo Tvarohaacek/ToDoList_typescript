@@ -80,7 +80,7 @@ const App: React.FC = () => {
                         tasks={tasks}
                         members={teamMembers}
                         currentDate={currentDate}
-                        onTaskComplete={markTaskAsCompleted}
+                        onTaskComplete={(id) => markTaskAsCompleted(Number(id))} // Převedení id na number
                     />
                 </div>
             </div>
