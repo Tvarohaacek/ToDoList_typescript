@@ -4,7 +4,7 @@ body {
     padding: 0;
     line-height: 1.6;
     background-color: #f9f9f9;
-    color: #333;
+    color: lightslategray;
 }
 
 .app-container {
@@ -17,7 +17,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #333;
+    background-color: darkslategray;
     color: #fff;
     padding: 1rem;
     margin-bottom: 1rem;
@@ -45,7 +45,7 @@ body {
 }
 
 .btn {
-    background-color: #4CAF50;
+    background-color: dodgerblue;
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -54,7 +54,7 @@ body {
 }
 
 .btn:hover {
-    background-color: #45a049;
+    background-color: dodgerblue;
 }
 
 .form-control {
