@@ -35,7 +35,7 @@ const App: React.FC = () => {
     const addTask = (task: Omit<Task, 'id' | 'isCompleted'>) => {
         const newTask: Task = {
             ...task,
-            id: Date.now(),
+            id: Date.now().toString(),
             isCompleted: false
         };
         const updatedTasks = [...tasks, newTask];

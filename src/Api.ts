@@ -1,3 +1,4 @@
+//@ts-ignore
 import axios from 'axios';
 import { Member } from './Member';
 import { Task } from './Task';
