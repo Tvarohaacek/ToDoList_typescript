@@ -5,8 +5,10 @@ import TaskForm from './ToDoList/TaskForm';
 import TeamMemberList from './ToDoList/TeamMemberList';
 import TaskList from './ToDoList/TaskList';
 import { Member } from './ToDoList/Member';
-import { Task } from './ToDoList//Task';
+import { Task } from './ToDoList/Task';
 import './ToDoList/styles.css';
+
+const API_URL = 'http://localhost:3001'; // Base URL for json-server
 
 const App: React.FC = () => {
     const [teamMembers, setTeamMembers] = useState<Member[]>([]);
@@ -14,46 +16,97 @@ const App: React.FC = () => {
     const [currentDate, setCurrentDate] = useState<Date>(new Date());
 
     useEffect(() => {
-        // Load data from sessionStorage on initial render
-        const storedMembers = JSON.parse(sessionStorage.getItem('teamMembers') || '[]');
-        const storedTasks = JSON.parse(sessionStorage.getItem('tasks') || '[]').map((task: Task) => ({
-            ...task,
-            dueDate: new Date(task.dueDate)
-        }));
+        // Load data from the database on initial render
+        const fetchData = async () => {
+            try {
+                const membersResponse = await fetch(`${API_URL}/teamMembers`);
+                const tasksResponse = await fetch(`${API_URL}/tasks`);
+                const members = await membersResponse.json();
+                const tasks = await tasksResponse.json();
 
-        setTeamMembers(storedMembers);
-        setTasks(storedTasks);
+                setTeamMembers(members);
+                setTasks(
+                    tasks.map((task: Task) => ({
+                        ...task,
+                        dueDate: task.dueDate ? new Date(task.dueDate) : null,
+                    }))
+                );
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+
+        // Nastavení intervalu pro aktualizaci času každou minutu
+        const timer = setInterval(() => {
+            setCurrentDate(new Date());
+        }, 60000);
+
+        // Úklid intervalu při unmountování komponenty
+        return () => clearInterval(timer);
     }, []);
 
-    const addMember = (member: Member) => {
-        const updatedMembers = [...teamMembers, { ...member, id: Date.now() }];
-        setTeamMembers(updatedMembers);
-        sessionStorage.setItem('teamMembers', JSON.stringify(updatedMembers));
+    const addMember = async (member: Member) => {
+        const newMember = { ...member, id: Date.now().toString() };
+        try {
+            const response = await fetch(`${API_URL}/teamMembers`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newMember),
+            });
+            if (response.ok) {
+                setTeamMembers([...teamMembers, newMember]);
+            }
+        } catch (error) {
+            console.error('Error adding member:', error);
+        }
     };
 
-    const addTask = (task: Omit<Task, 'id' | 'isCompleted'>) => {
+    const addTask = async (task: Omit<Task, 'id' | 'isCompleted'>) => {
         const newTask: Task = {
             ...task,
-            id: Date.now(),
-            isCompleted: false
+            id: Date.now().toString(),
+            isCompleted: false,
         };
-        const updatedTasks = [...tasks, newTask];
-        setTasks(updatedTasks);
-        sessionStorage.setItem('tasks', JSON.stringify(updatedTasks));
+        try {
+            const response = await fetch(`${API_URL}/tasks`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newTask),
+            });
+            if (response.ok) {
+                setTasks([...tasks, newTask]);
+            }
+        } catch (error) {
+            console.error('Error adding task:', error);
+        }
     };
 
-    const markTaskAsCompleted = (taskId: number) => {
-        const updatedTasks = tasks.map(task =>
-            task.id === taskId ? { ...task, isCompleted: true } : task
-        );
-        setTasks(updatedTasks);
-        sessionStorage.setItem('tasks', JSON.stringify(updatedTasks));
+    const markTaskAsCompleted = async (taskId: string) => {
+        const taskToUpdate = tasks.find(task => task.id === taskId);
+        if (!taskToUpdate) return;
+
+        const updatedTask = { ...taskToUpdate, isCompleted: true };
+
+        try {
+            const response = await fetch(`${API_URL}/tasks/${taskId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedTask),
+            });
+            if (response.ok) {
+                const updatedTaskFromServer = await response.json();
+                setTasks(tasks.map(task => (task.id === taskId ? updatedTaskFromServer : task)));
+            }
+        } catch (error) {
+            console.error('Error marking task as completed:', error);
+        }
     };
 
     return (
         <div className="app-container">
             <Calendar
-                currentDate={currentDate}
                 onDateChange={setCurrentDate}
             />
             <div className="row">
