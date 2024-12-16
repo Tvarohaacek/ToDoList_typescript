@@ -1,40 +1,43 @@
-// src/components/Calendar.tsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface CalendarProps {
-    currentDate: Date;
     onDateChange: (date: Date) => void;
 }
 
-const Calendar: React.FC<CalendarProps> = ({ currentDate, onDateChange }) => {
+const Calendar: React.FC<CalendarProps> = ({ onDateChange }) => {
+    const [currentDate, setCurrentDate] = useState(new Date());
+
+    useEffect(() => {
+        // Aktualizace času každou minutu
+        const timer = setInterval(() => {
+            const newDate = new Date();
+            setCurrentDate(newDate);
+            onDateChange(newDate);
+        }, 60000); // 60000 ms = 1 minuta
+
+        // Počáteční nastavení aktuálního času
+        onDateChange(currentDate);
+
+        // Úklid intervalu při unmountování komponenty
+        return () => clearInterval(timer);
+    }, []);
+
     const formatDate = (date: Date) => {
-        return date.toLocaleDateString('en-US', {
+        return date.toLocaleDateString('cs-CZ', {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
-            day: 'numeric'
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
         });
-    };
-
-    const handlePrevDay = () => {
-        const newDate = new Date(currentDate);
-        newDate.setDate(newDate.getDate() - 1);
-        onDateChange(newDate);
-    };
-
-    const handleNextDay = () => {
-        const newDate = new Date(currentDate);
-        newDate.setDate(newDate.getDate() + 1);
-        onDateChange(newDate);
     };
 
     return (
         <div className="calendar">
-        <button onClick={handlePrevDay} className="btn">Previous Day</button>
-    <div>{formatDate(currentDate)}</div>
-    <button onClick={handleNextDay} className="btn">Next Day</button>
-    </div>
-);
+            <div>{formatDate(currentDate)}</div>
+        </div>
+    );
 };
 
 export default Calendar;

@@ -11,7 +11,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ members, onAddTask }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [dueDate, setDueDate] = useState('');
-    const [assignedMembers, setAssignedMembers] = useState<number[]>([]);
+    const [assignedMembers, setAssignedMembers] = useState<string[]>([]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -40,7 +40,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ members, onAddTask }) => {
         setAssignedMembers([]);
     };
 
-    const handleMemberSelect = (memberId: number) => {
+    const handleMemberSelect = (memberId: string) => {
         setAssignedMembers(prev =>
             prev.includes(memberId)
                 ? prev.filter(id => id !== memberId)

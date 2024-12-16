@@ -1,8 +1,8 @@
 export interface Task {
-    id: number;
+    id: string;
     title: string;
     description: string;
     dueDate: Date;
-    assignedMembers: number[];
+    assignedMembers: string[];
     isCompleted: boolean;
 }

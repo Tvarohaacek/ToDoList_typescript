@@ -14,7 +14,7 @@ const TeamMemberForm: React.FC<TeamMemberFormProps> = ({ onAddMember }) => {
         if (!name.trim() || !role.trim()) return;
 
         const newMember: Member = {
-            id: Date.now(),
+            id: Date.now().toString(), // Změna na string
             name,
             role,
             email: ''
