@@ -27,7 +27,10 @@ const App: React.FC = () => {
     }, []);
 
     const addMember = (member: Member) => {
-        const updatedMembers = [...teamMembers, { ...member, id: Date.now() }];
+        const updatedMembers = [
+            ...teamMembers, 
+            { ...member, id: Date.now().toString() } // Převod id na string
+        ];
         setTeamMembers(updatedMembers);
         sessionStorage.setItem('teamMembers', JSON.stringify(updatedMembers));
     };
@@ -35,7 +38,7 @@ const App: React.FC = () => {
     const addTask = (task: Omit<Task, 'id' | 'isCompleted'>) => {
         const newTask: Task = {
             ...task,
-            id: Date.now(),
+            id: Date.now().toString(),
             isCompleted: false
         };
         const updatedTasks = [...tasks, newTask];
@@ -45,7 +48,9 @@ const App: React.FC = () => {
 
     const markTaskAsCompleted = (taskId: number) => {
         const updatedTasks = tasks.map(task =>
-            task.id === taskId ? { ...task, isCompleted: true } : task
+            task.id === taskId.toString() // Převod čísla na řetězec
+                ? { ...task, isCompleted: true }
+                : task
         );
         setTasks(updatedTasks);
         sessionStorage.setItem('tasks', JSON.stringify(updatedTasks));
@@ -75,7 +80,7 @@ const App: React.FC = () => {
                         tasks={tasks}
                         members={teamMembers}
                         currentDate={currentDate}
-                        onTaskComplete={markTaskAsCompleted}
+                        onTaskComplete={(id) => markTaskAsCompleted(Number(id))} // Převedení id na number
                     />
                 </div>
             </div>
