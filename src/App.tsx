@@ -97,7 +97,11 @@ const App: React.FC = () => {
             });
             if (response.ok) {
                 const updatedTaskFromServer = await response.json();
-                setTasks(tasks.map(task => (task.id === taskId ? updatedTaskFromServer : task)));
+                setTasks(tasks.map(task => (task.id === taskId ? updatedTaskFromServer : task))
+                    .map(x => (
+                        { ...x, dueDate: new Date(x.dueDate)}
+                    ))
+                );
             }
         } catch (error) {
             console.error('Error marking task as completed:', error);
