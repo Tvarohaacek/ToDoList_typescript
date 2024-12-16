@@ -39,6 +39,7 @@ const TaskList: React.FC<TaskListProps> = ({
                     `}
                 >
                     <div className="task-header">
+
                         <strong>{task.title}</strong>
                         {!task.isCompleted && (
                             <button
